@@ -32,14 +32,14 @@ Java Doc中的描述是
     * @since Java Persistence 1.0
 
 ### 源码
-在Debug的时候发现在 **BaseInsertProvider** 实现类:
+在Debug的时候发现在 **BaseInsertProvider** 实现类,如下:
 
     public String insert(MappedStatement ms) {
         Class<?> entityClass = getEntityClass(ms);
         ...
     }
 
-insert方法调用了有 **getEntityClass** 方法:
+在insert方法调用了 **getEntityClass** 方法:
 
     /**
      * 获取返回值类型 - 实体类型
@@ -70,7 +70,7 @@ insert方法调用了有 **getEntityClass** 方法:
         throw new MapperException("无法获取Mapper<T>泛型类型:" + msId);
     }
 
-关键在EntityHelper.initEntityNameMap静态方法,初始化实体类.
+之后初始化类型,通过EntityHelper.initEntityNameMap静态方法完成初始化.
 
     for (EntityField field : fields) {
         //如果启用了简单类型，就做简单类型校验，如果不是简单类型，直接跳过
@@ -80,7 +80,7 @@ insert方法调用了有 **getEntityClass** 方法:
         processField(entityTable, style, field);
     }
 
-最后在处理单个Field的时候,有一个annotatio的判断
+在处理完Table(Class)相关的属性后,在处理单个Field(Column)的时候,有一个annotation的判断
 
     /**
      * 处理一列
@@ -100,4 +100,4 @@ insert方法调用了有 **getEntityClass** 方法:
 这就是为什么Entity对象中添加@Transient可以生效的原因.
 
 ### 总结
-@Transient生效的原因是在处理单个Field的时候将此Field过滤掉,这样就不会存在与EntityClass里面.
+@Transient生效的原因是在处理单个Field的时候将此Field过滤掉,这样就不会存在与EntityClass里面.在之后的SQL拼接就会过滤掉这个字段.
